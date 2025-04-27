@@ -12,9 +12,10 @@
 # authentication. This script is to be run on the client device that is connecting to the traget.
 
 ## NOTES:
-# This script should be run with elevated privilleges (sudo). It was created to automate a tutorial 
-# by "Yes, I know IT !" YouTube video tutorial on 'How to open a Linux Session over Bluetooth ? 
-# Yes, I Know IT ! Ep 26' - https://www.youtube.com/watch?v=7xBSgb1GwCw.
+# This script should be run with elevated privilleges (sudo). It was created by automating a 
+# tutorial by "Yes, I know IT !" YouTube video tutorial on 'How to open a Linux Session over 
+# Bluetooth ? Yes, I Know IT ! Ep 26' - https://www.youtube.com/watch?v=7xBSgb1GwCw with some 
+# additional customizations and configurations.
 
 ## KNOWN BUGS:
 # There is a known bug with this connection where a set of AT's are sent to the long after initial
