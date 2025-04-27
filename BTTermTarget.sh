@@ -1,14 +1,15 @@
 #!/bin/bash
 
 ## PROJECT INFORMATION:
-# Project Title: 
+# Project Title: Offline AI Reconnaissance and Hacking Tool
 # Team Members: Richard Flores, Natasha Menon, and Matt Penn
-# Class: IT 490 Capstone Project
+# Class: IT 489 Capstone Project
 # Submission Date: May 1, 2025
 
 ## DESCRIPTION:
 # This code creates a terminal emulator connection on a remote host for a client device, such as a 
-# tablet, to connect to it over a serial bluetooth connection using Getty authentication.
+# tablet or another computer, to connect to it over a serial bluetooth connection using Getty 
+# authentication. This script is to be run on the target device being connected to.
 
 ## NOTES:
 # This script should be run with elevated privilleges (sudo). It was created to automate a tutorial 
@@ -17,7 +18,7 @@
 
 # ------------------------- VARIABLES ------------------------- #
 # Configure variables here for setup
-tabletMAC = A8:CA:77:05:42:C1
+clientMAC = A8:CA:77:05:42:C1
 # ------------------------------------------------------------- #
 
 ## UPDATE APT CACHE AND UPGRADE INSTALLATION

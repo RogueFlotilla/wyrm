@@ -1,19 +1,26 @@
 #!/bin/bash
 
 ## PROJECT INFORMATION:
-# Project Title: 
+# Project Title: Offline AI Reconnaissance and Hacking Tool
 # Team Members: Richard Flores, Natasha Menon, and Matt Penn
-# Class: IT 490 Capstone Project
+# Class: IT 489 Capstone Project
 # Submission Date: May 1, 2025
 
 ## DESCRIPTION:
 # This code creates a terminal emulator connection on a remote host for a client device, such as a 
-# tablet, to connect to it over a serial bluetooth connection using Getty authentication.
+# tablet or another computer, to connect to it over a serial bluetooth connection using Getty 
+# authentication. This script is to be run on the client device that is connecting to the traget.
 
 ## NOTES:
 # This script should be run with elevated privilleges (sudo). It was created to automate a tutorial 
 # by "Yes, I know IT !" YouTube video tutorial on 'How to open a Linux Session over Bluetooth ? 
 # Yes, I Know IT ! Ep 26' - https://www.youtube.com/watch?v=7xBSgb1GwCw.
+
+## KNOWN BUGS:
+# There is a known bug with this connection where a set of AT's are sent to the long after initial
+# connection is made. This is due to the connection being treated as a modem connection, and not
+# a serial connection. No solution has been identified at this time. It is possible to wait for a
+# set of three "AT" login attempts before logging into the target device.
 
 # ------------------------- VARIABLES ------------------------- #
 # Configure variables here for setup
