@@ -64,3 +64,6 @@ sudo systemctl enable /etc/systemd/system/bluetooth.service
 ## START BLUETOOTH SERVICE
 sudo systemctl start bluetooth.service
 
+## BIND BLUETOOTH SERIAL CONNECTION TO GETTY FOR TERMINAL LOGIN
+sudo /usr/bin/rfcomm watch hci0 22 getty rfcomm0 115200 vt100
+
