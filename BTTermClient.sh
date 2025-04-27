@@ -18,10 +18,10 @@
 # additional customizations and configurations.
 
 ## KNOWN BUGS:
-# There is a known bug with this connection where a set of AT's are sent to the long after initial
-# connection is made. This is due to the connection being treated as a modem connection, and not
-# a serial connection. No solution has been identified at this time. It is possible to wait for a
-# set of three "AT" login attempts before logging into the target device.
+# There is a known bug with this connection where a set of AT's are sent to the longin after 
+# initial connection is made. This is due to the connection being treated as a modem connection, 
+# and not a serial connection. No solution has been identified at this time. It is possible to wait 
+# for a set of three "AT" login attempts before logging into the target device.
 
 # ------------------------- VARIABLES ------------------------- #
 # Configure variables here for setup
