@@ -29,8 +29,10 @@ targetMAC = 2C:CF:67:9D:BA:66
 # ------------------------------------------------------------- #
 
 ## INSTALL DEPENDENCIES
-sudo apt install bluetooth screen
+sudo apt install core-utils bluetooth screen
 
-## 
+## BIND BLUETOOTH SERIAL CONNECTION TO SCREEN FOR TERMINAL LOGIN
 sudo rfcomm -i hci0 bind /dev/rfcomm0 $targetMAC 22
+
+## INITIATE REMOTE CONNECTION TO TARGET OF BLUETOOTH SERIAL CONNECTION
 sudo screen /dev/rfcomm0
