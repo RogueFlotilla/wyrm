@@ -16,6 +16,12 @@
 # by "Yes, I know IT !" YouTube video tutorial on 'How to open a Linux Session over Bluetooth ? 
 # Yes, I Know IT ! Ep 26' - https://www.youtube.com/watch?v=7xBSgb1GwCw.
 
+## KNOWN BUGS:
+# There is a known bug with this connection where a set of AT's are sent to the long after initial
+# connection is made. This is due to the connection being treated as a modem connection, and not
+# a serial connection. No solution has been identified at this time. It is possible to wait for a
+# set of three "AT" login attempts before logging into the target device.
+
 # ------------------------- VARIABLES ------------------------- #
 # Configure variables here for setup
 clientMAC = A8:CA:77:05:42:C1
