@@ -65,5 +65,28 @@ sudo systemctl enable /etc/systemd/system/bluetooth.service
 sudo systemctl start bluetooth.service
 
 ## BIND BLUETOOTH SERIAL CONNECTION TO GETTY FOR TERMINAL LOGIN
-sudo /usr/bin/rfcomm watch hci0 22 getty rfcomm0 115200 vt100
+# sudo /usr/bin/rfcomm watch hci0 22 getty rfcomm0 115200 vt100
 
+## CREATE BLUETOOTH LOGIN SERVICE THAT STARTS AT BOOT
+# Create file
+sudo touch /etc/systemd/system/btlogin.service
+
+# Write to file
+cat <<EOF | sudo tee /etc/systemd/system/btlogin.service > /dev/null
+[Unit]
+Description=Remote login over Bluetooth serial connection with Getty authentication
+After=bluetooth.service
+Requires=bluetooth.service
+
+[Service]
+ExecStart=/usr/bin/rfcomm watch hci0 22 setsid getty rfcomm0 115200 vt100
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+## ENABLE AND START LOGIN SERVICE
+sudo systemctl daemon-reload
+sudo systemctl enable btlogin
+sudo systemctl start btlogin
+sudo systemctl --lines 0 --no-pager status btlogin
