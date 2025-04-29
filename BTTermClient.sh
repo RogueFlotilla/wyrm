@@ -25,7 +25,8 @@
 
 # ------------------------- VARIABLES ------------------------- #
 # Configure variables here for setup
-targetMAC = 2C:CF:67:9D:BA:66
+# targetMAC = 2C:CF:67:9D:BA:66 # Richard's Pi
+targetMAC = 2C:CF:67:70:86:5F # Matt's Pi
 # ------------------------------------------------------------- #
 
 ## INSTALL DEPENDENCIES
