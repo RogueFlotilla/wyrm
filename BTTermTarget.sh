@@ -59,10 +59,10 @@ sudo sed -i "/ExecStart=/a \\
 ExecStartPost=/bin/hciconfig hci0 up" \
 /etc/systemd/system/bluetooth.service
 
-# Advertise the port 22 of the bluetooth device as being a virtual serial port
-grep -qxF "ExecStartPost=/usr/bin/sdptool add --channel=22 SP" /etc/systemd/system/bluetooth.service || \
+# Advertise the port 30 of the bluetooth device as being a virtual serial port
+grep -qxF "ExecStartPost=/usr/bin/sdptool add --channel=30 SP" /etc/systemd/system/bluetooth.service || \
 sudo sed -i "/ExecStart=/a \\
-ExecStartPost=/usr/bin/sdptool add --channel=22 SP" \
+ExecStartPost=/usr/bin/sdptool add --channel=30 SP" \
 /etc/systemd/system/bluetooth.service
 
 ## CREATE SYMBOLIC LINKS TO NEW BLUETOOTH SERVICE FILE CREATED
@@ -73,7 +73,7 @@ sudo systemctl enable /etc/systemd/system/bluetooth.service
 sudo systemctl start bluetooth.service
 
 ## BIND BLUETOOTH SERIAL CONNECTION TO GETTY FOR TERMINAL LOGIN
-# sudo /usr/bin/rfcomm watch hci0 22 getty rfcomm0 115200 vt100
+# sudo /usr/bin/rfcomm watch hci0 30 getty rfcomm0 115200 vt100
 
 ## CREATE BLUETOOTH LOGIN SERVICE THAT STARTS AT BOOT
 # Create file
@@ -87,7 +87,7 @@ After=bluetooth.service
 Requires=bluetooth.service
 
 [Service]
-ExecStart=/usr/bin/rfcomm watch hci0 22 setsid getty rfcomm0 115200 vt100
+ExecStart=/usr/bin/rfcomm watch hci0 30 setsid getty rfcomm0 115200 vt100
 
 [Install]
 WantedBy=multi-user.target
