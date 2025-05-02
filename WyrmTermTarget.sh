@@ -1,112 +1,100 @@
 #!/bin/bash
 
-## PROJECT INFORMATION:
-# Project Title: Offline AI Reconnaissance and Hacking Tool
-# Team Members: Richard Flores, Natasha Menon, and Matt Penn
-# Class: IT 489 Capstone Project
-# Submission Date: May 1, 2025
+# =========================================== WyrmTerm ========================================== #
+#
+# Script Name:  WyrmTermTarget
+# Description:  Configures and starts a boot-time getty service on an RFCOMM serial port, enabling
+#               Bluetooth-based remote terminal access to the target device. The RFCOMM device is
+#               bound to the system's Bluetooth adapter and a paired remote client. Run
+#               'WyrmTermClient' on the client device after executing this script on the target.
+# Author:       Richard "RogueFlotilla" Flores
+# Created:      2025-04-17
+# Modified:     2025-05-02
+# Version:      dev-2025-05-02
+# Usage:        ./WyrmTermTarget
+# Dependencies: bluetooth, bluez, coreutils
+# Tested on:    Debian 12.10, BlueZ 5.66, Bash 5.2.15-2+b7
+# License:      Custom Academic License – for academic, non-commercial use only. See LICENSE.
+# Notes:        Developed while attending Marymount University, CAE-CD, Arlington, VA, for the
+#               class IT 489 Capstone Project. Project title: Offline AI Reconnaissance and
+#               Hacking Tool. Team Members: Richard Flores, Natasha Menon, and Charles "Matt" Penn.
+#
+# =============================================================================================== #
 
-## DESCRIPTION:
-# This code creates a terminal emulator connection on a remote host for a client
- device, such as a
-# tablet or another computer, to connect to it over a serial bluetooth connectio
-n using Getty
-# authentication. This script is to be run on the target device being connected
-to.
-
-## NOTES:
-# This script should be run with elevated privilleges (sudo). It was created by
-automating a
-# tutorial by "Yes, I know IT !" YouTube video tutorial on 'How to open a Linux
-Session over
-# Bluetooth ? Yes, I Know IT ! Ep 26' - https://www.youtube.com/watch?v=7xBSgb1G
-wCw with some
-# additional customizations and configurations.
-
-## KNOWN BUGS:
-# There is a known bug with this connection where a set of AT's are sent to the
-longin after
-# initial connection is made. This is due to the connection being treated as a m
-odem connection,
-# and not a serial connection. No solution has been identified at this time. It
-is possible to wait
-# for a set of three "AT" login attempts before logging into the target device.
-
-# ------------------------- VARIABLES ------------------------- #
+# ------------------------------------------ VARIABLES ------------------------------------------ #
 # Configure variables here for setup
-clientMAC="A8:CA:77:05:42:C1"
-# ------------------------------------------------------------- #
+BThci="hci0" # Host Controller Interface of the Bluetooth adapter. TIP: command "hciconfig -a".
+BTchannel="30" # The Bluetooth channel (0-39) to use for the connection. Must match client.
+RFcomm="rfcomm24" # The virtual serial port created for the Bluetooth connection
+# ----------------------------------------------------------------------------------------------- #
 
-## UPDATE APT CACHE AND UPGRADE INSTALLATION
-sudo apt update
-# sudo apt upgrade -y
-
-## INSTALL BLUETOOTH PACKAGE IN ORDER TO GET DEFAULT SERVICE FILE
+## INSTALL DEPENDENCIES
+apt update
+apt install bluetooth, bluez, coreutils
 
 ## DISABLE DEFAULT BLUETOOTH SERVICE
-sudo systemctl stop bluetooth
-sudo systemctl disable bluetooth
+systemctl stop bluetooth
+systemctl disable bluetooth
 
 ## CREATE A NEW BLUETOOTH SERVICE BASED OFF DEFAULT ONE
-sudo cp /lib/systemd/system/bluetooth.service /etc/systemd/system/
+cp /lib/systemd/system/bluetooth.service /etc/systemd/system/
 
 ## CUSTOMIZE NEW BLUETOOTH SERVICE
 # Run in compatibility mode
-sudo sed -i "/ExecStart=/s/$/ --compat/" \
+sed -i "/ExecStart=/s/$/ --compat/" \
 /etc/systemd/system/bluetooth.service
 
 # enable page and inquiry scan
-grep -qxF "ExecStartPost=/bin/hciconfig hci0 piscan" /etc/systemd/system/bluetoo
-th.service || \
-sudo sed -i "/ExecStart=/a \\
-ExecStartPost=/bin/hciconfig hci0 piscan" \
+grep -qxF 'ExecStartPost=/bin/hciconfig "'$BThci'" piscan' /etc/systemd/system/bluetooth.service || \
+sed -i '/ExecStart=/a \\
+ExecStartPost=/bin/hciconfig "'$BThci'" piscan' \
 /etc/systemd/system/bluetooth.service
 
 # Power-up the first bluetooth controller
-grep -qxF "ExecStartPost=/bin/hciconfig hci0 up" /etc/systemd/system/bluetooth.s
-ervice || \
-sudo sed -i "/ExecStart=/a \\
-ExecStartPost=/bin/hciconfig hci0 up" \
+grep -qxF 'ExecStartPost=/bin/hciconfig "'$BThci'" up' /etc/systemd/system/bluetooth.service || \
+sed -i '/ExecStart=/a \\
+ExecStartPost=/bin/hciconfig "'$BThci'" up' \
 /etc/systemd/system/bluetooth.service
 
 # Advertise the port 22 of the bluetooth device as being a virtual serial port
-grep -qxF "ExecStartPost=/usr/bin/sdptool add --channel=30 SP" /etc/systemd/syst
-em/bluetooth.service || \
-sudo sed -i "/ExecStart=/a \\
-ExecStartPost=/usr/bin/sdptool add --channel=30 SP" \
+grep -qxF 'ExecStartPost=/usr/bin/sdptool add --channel="'$BTchannel'" SP' /etc/systemd/system/bluetooth.service || \
+sed -i '/ExecStart=/a \\
+ExecStartPost=/usr/bin/sdptool add --channel="'$BTchannel'" SP' \
 /etc/systemd/system/bluetooth.service
 
 ## CREATE SYMBOLIC LINKS TO NEW BLUETOOTH SERVICE FILE CREATED
-sudo systemctl daemon-reload
-sudo systemctl enable /etc/systemd/system/bluetooth.service
+systemctl daemon-reload
+systemctl enable /etc/systemd/system/bluetooth.service
 
 ## START BLUETOOTH SERVICE
-sudo systemctl start bluetooth.service
+systemctl start bluetooth.service
 
 ## BIND BLUETOOTH SERIAL CONNECTION TO GETTY FOR TERMINAL LOGIN
-# sudo /usr/bin/rfcomm watch hci0 30 getty rfcomm0 115200 vt100
+# Note: Can be used to create a single listener instance w/o creating boot-time service
+# /usr/bin/rfcomm watch hci0 30 getty rfcomm0 115200 vt100
 
 ## CREATE BLUETOOTH LOGIN SERVICE THAT STARTS AT BOOT
+# Note: Creates a listener that starts at each boot. No on device interaction needed after setup.
 # Create file
-sudo touch /etc/systemd/system/btlogin.service
+touch /etc/systemd/system/btlogin.service
 
 # Write to file
-cat <<EOF | sudo tee /etc/systemd/system/btlogin.service > /dev/null
+cat <<EOF | tee /etc/systemd/system/wyrmterm.service > /dev/null
 [Unit]
-Description=Remote login over Bluetooth serial connection with Getty authenticat
-ion
+Description=WyrmTerm - Remote terminal over Bluetooth serial connection with Getty
 After=bluetooth.service
 Requires=bluetooth.service
 
 [Service]
-ExecStart=/usr/bin/rfcomm watch hci0 30 setsid getty rfcomm0 115200 vt100
+ExecStart=/usr/bin/rfcomm watch ${BThci} ${BTchannel} setsid getty ${RFcomm} 115200 vt100
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
 ## ENABLE AND START LOGIN SERVICE
-sudo systemctl daemon-reload
-sudo systemctl enable btlogin
-sudo systemctl start btlogin
-sudo systemctl --lines 0 --no-pager status btlogin
+systemctl daemon-reload
+systemctl enable wyrmterm
+systemctl start wyrmterm
+systemctl --lines 0 --no-pager status wyrmterm
